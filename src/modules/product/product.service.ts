@@ -13,8 +13,10 @@ const createProductIntoDB = async (productData: TProduct) => {
 };
 
 // getting all product from database
-const getAllProductsFromDB = async () => {
-  const result = await Product.find();
+const getAllProductsFromDB = async (searchTerm?: string) => {
+  const query = searchTerm ? { name: new RegExp(searchTerm, 'i') } : {};
+
+  const result = await Product.find(query);
 
   return result;
 };
