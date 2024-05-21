@@ -86,20 +86,8 @@ const updateProduct = async (req: Request, res: Response) => {
     const { productId } = req.params;
     const updateData = req.body;
 
-    // Validate the update data using Joi
-    const { error, value } = productValidationSchema.validate(updateData);
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: 'Update data Validation error',
-        error: error.details,
-      });
-    }
+    const updatedProduct = await ProductServices.updateProductInDB(productId, updateData);
 
-    const updatedProduct = await ProductServices.updateProductInDB(
-      productId,
-      value,
-    );
     if (!updatedProduct) {
       return res.status(404).json({
         success: false,

@@ -30,8 +30,19 @@ const getSingleProductFromDB = async (productId: string) => {
 };
 
 // updating single product from database
-const updateProductInDB = async (productId: string, productData: TProduct) => {
-  const result = await Product.findByIdAndUpdate(productId, productData, {
+const updateProductInDB = async (
+  productId: string,
+  productData: Partial<TProduct>,
+  updateInventoryOnly: boolean = false,
+) => {
+  const update = updateInventoryOnly
+    ? {
+        'inventory.quantity': productData.inventory?.quantity,
+        'inventory.inStock': productData.inventory?.inStock,
+      }
+    : productData;
+
+  const result = await Product.findByIdAndUpdate(productId, update, {
     new: true,
   });
 
