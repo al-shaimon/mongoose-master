@@ -12,7 +12,7 @@ const createProductIntoDB = async (productData: TProduct) => {
   return result;
 };
 
-// getting all product from database
+// getting all product from database & search query
 const getAllProductsFromDB = async (searchTerm?: string) => {
   const query = searchTerm ? { name: new RegExp(searchTerm, 'i') } : {};
 

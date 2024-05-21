@@ -34,7 +34,7 @@ const createProduct = async (req: Request, res: Response) => {
   }
 };
 
-// getting all products controller
+// getting all products controller with search query
 const getAllProducts = async (req: Request, res: Response) => {
   try {
     const { searchTerm } = req.query;

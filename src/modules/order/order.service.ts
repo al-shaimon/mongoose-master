@@ -32,9 +32,11 @@ const createOrderInDB = async (orderData: TOrder) => {
   return result;
 };
 
-// getting all orders from database
-const getAllOrdersFromDB = async () => {
-  const result = await Order.find({});
+// getting all orders from database & email search query
+const getAllOrdersFromDB = async (email?: string) => {
+  const query = email ? { email: email } : {};
+
+  const result = await Order.find(query);
 
   return result;
 };
