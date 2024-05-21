@@ -16,7 +16,7 @@ const createProduct = async (req: Request, res: Response) => {
     if (error) {
       return res.status(400).send({
         success: false,
-        message: 'Something went wrong!',
+        message: 'Create data Validation error!',
         error: error.details,
       });
     }
@@ -74,8 +74,49 @@ const getSingleProduct = async (req: Request, res: Response) => {
   }
 };
 
+// updating product in database
+const updateProduct = async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+    const updateData = req.body;
+
+    // Validate the update data using Joi
+    const { error, value } = productValidationSchema.validate(updateData);
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: 'Update data Validation error',
+        error: error.details,
+      });
+    }
+
+    const updatedProduct = await ProductServices.updateProductInDB(
+      productId,
+      value,
+    );
+    if (!updatedProduct) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Product updated successfully!',
+      data: updatedProduct,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'Something went wrong!',
+    });
+  }
+};
+
 export const ProductControllers = {
   createProduct,
   getAllProducts,
   getSingleProduct,
+  updateProduct,
 };

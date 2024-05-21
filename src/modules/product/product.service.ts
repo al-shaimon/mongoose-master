@@ -20,15 +20,21 @@ const getAllProductsFromDB = async () => {
 };
 
 // getting single product from database
-const getSingleProductFromDB = async (_id: string) => {
-  const result = await Product.findOne({ _id });
+const getSingleProductFromDB = async (productId: string) => {
+  const result = await Product.findOne({ _id: productId });
 
   // const result = await Product.aggregate([{ $match: { id: id } }]);
   return result;
+};
+
+// updating single product from database
+const updateProductInDB = async (productId: string, productData: TProduct) => {
+  return Product.findByIdAndUpdate(productId, productData, { new: true });
 };
 
 export const ProductServices = {
   createProductIntoDB,
   getAllProductsFromDB,
   getSingleProductFromDB,
+  updateProductInDB,
 };
