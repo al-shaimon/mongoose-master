@@ -6,7 +6,7 @@ import {
   TVariant,
 } from './product.interface';
 
-const VariantSchema = new Schema<TVariant>({
+const variantSchema = new Schema<TVariant>({
   type: {
     type: String,
     required: [true, 'Variant type is required.'],
@@ -17,7 +17,7 @@ const VariantSchema = new Schema<TVariant>({
   },
 });
 
-const InventorySchema = new Schema<TInventory>({
+const inventorySchema = new Schema<TInventory>({
   quantity: { type: Number, required: [true, 'Product quantity is required.'] },
   inStock: {
     type: Boolean,
@@ -25,6 +25,7 @@ const InventorySchema = new Schema<TInventory>({
   },
 });
 
+// product schema
 const productSchema = new Schema<TProduct, ProductModel>({
   name: {
     type: String,
@@ -47,13 +48,21 @@ const productSchema = new Schema<TProduct, ProductModel>({
     required: [true, 'Product tags are required.'],
   },
   variants: {
-    type: [VariantSchema],
+    type: [variantSchema],
     required: [true, 'Product variant is required.'],
   },
   inventory: {
-    type: InventorySchema,
+    type: inventorySchema,
     required: [true, 'Product inventory is required.'],
   },
 });
+
+// creating a static method to the model
+
+productSchema.statics.isProductExists = async function (name: string) {
+  const existingProduct = await Product.findOne({ name });
+
+  return existingProduct;
+};
 
 export const Product = model<TProduct, ProductModel>('Product', productSchema);
