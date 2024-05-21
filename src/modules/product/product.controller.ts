@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { ProductServices } from './product.service';
 import productValidationSchema from './product.validation';
 
+// creating product controller
 const createProduct = async (req: Request, res: Response) => {
   try {
     const productData = req.body;
@@ -25,14 +26,15 @@ const createProduct = async (req: Request, res: Response) => {
       message: 'Product created successfully!',
       data: result,
     });
-  } catch (error: any) {
+  } catch (err: any) {
     res.status(500).send({
       success: false,
-      message: error.message || 'Something went wrong!',
+      message: err.message || 'Something went wrong!',
     });
   }
 };
 
+// getting all products controller
 const getAllProducts = async (req: Request, res: Response) => {
   try {
     const result = await ProductServices.getAllProductsFromDB();
@@ -51,7 +53,29 @@ const getAllProducts = async (req: Request, res: Response) => {
   }
 };
 
+// getting single product controller
+const getSingleProduct = async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+
+    const result = await ProductServices.getSingleProductFromDB(productId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Product fetched successfully!',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).send({
+      success: false,
+      message: err.message || 'Something went wrong!',
+      error: err,
+    });
+  }
+};
+
 export const ProductControllers = {
   createProduct,
   getAllProducts,
+  getSingleProduct,
 };

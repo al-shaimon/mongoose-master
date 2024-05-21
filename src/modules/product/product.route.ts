@@ -9,4 +9,6 @@ router.post('/', ProductControllers.createProduct);
 
 router.get('/', ProductControllers.getAllProducts);
 
+router.get('/:productId', ProductControllers.getSingleProduct);
+
 export const ProductRoutes = router;
