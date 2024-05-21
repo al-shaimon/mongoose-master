@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import { ProductServices } from './product.service';
 import productValidationSchema from './product.validation';
+import { Product } from './product.model';
 
 // creating product controller
 const createProduct = async (req: Request, res: Response) => {
@@ -43,6 +44,13 @@ const getAllProducts = async (req: Request, res: Response) => {
       searchTerm as string,
     );
 
+    if (result.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: searchTerm
@@ -66,6 +74,13 @@ const getSingleProduct = async (req: Request, res: Response) => {
 
     const result = await ProductServices.getSingleProductFromDB(productId);
 
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: 'Product fetched successfully!',
@@ -86,7 +101,23 @@ const updateProduct = async (req: Request, res: Response) => {
     const { productId } = req.params;
     const updateData = req.body;
 
-    const updatedProduct = await ProductServices.updateProductInDB(productId, updateData);
+    // checking if another product with same name exists in database
+    const existingProduct = await Product.findOne({
+      name: updateData.name,
+      _id: { $ne: productId },
+    });
+
+    if (existingProduct) {
+      return res.status(201).json({
+        success: false,
+        message: 'Product with same name already exists!',
+      });
+    }
+
+    const updatedProduct = await ProductServices.updateProductInDB(
+      productId,
+      updateData,
+    );
 
     if (!updatedProduct) {
       return res.status(404).json({
